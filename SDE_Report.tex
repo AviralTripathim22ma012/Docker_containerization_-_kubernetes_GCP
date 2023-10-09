@@ -1,0 +1,674 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\usepackage{multirow}
+\usepackage{setspace}
+\usepackage{parskip}
+\usepackage{svg}
+\usepackage[bottom]{footmisc}
+\usepackage{tikz}
+\usepackage[section]{placeins}
+\usepackage{enumitem}
+\usepackage{listings}
+\usepackage{tikz}
+\usepackage{enumitem}
+% \usepackage{url}
+\usepackage{xurl}
+
+% Specify the serif font
+% \setmainfont{Times New Roman}
+
+\lstset{%
+   frame=single,
+   framerule=1pt,
+   breaklines=true,
+   postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space},
+   aboveskip=6pt, % Adjust the spacing above the code listing
+   belowskip=6pt  % Adjust the spacing below the code listing
+}
+\setlength{\textfloatsep}{5pt}
+
+% This style is used to create block diagrams, you'll find it useful since many of your figures would be of that form, I'll try add more styles in the future :)
+\usetikzlibrary{trees,positioning,fit,calc}
+\tikzset{block/.style = {draw, fill=blue!20, rectangle,
+                         minimum height=3em, minimum width=4em},
+        input/.style = {coordinate},
+        output/.style = {coordinate}
+}
+
+\usepackage[section]{minted}
+\usepackage{xcolor}
+\usemintedstyle{porland}
+
+\usepackage{chngcntr}
+\counterwithin{figure}{section}
+
+\renewcommand{\arraystretch}{1.5}
+
+\usepackage[hidelinks]{hyperref}
+\hypersetup{
+    linktoc=all
+}
+
+\renewcommand\listingscaption{Listing}
+\renewcommand\listoflistingscaption{List of Listings}
+
+\usepackage{scrhack}
+\usepackage{tocbasic}
+\setuptoc{lol}{levelup}
+
+\usepackage{indentfirst}
+\geometry{a4paper, margin=1in}
+
+%----------EDIT COVER INFO HERE -----------------%
+
+\def \LOGOPATH {Group-26594.svg}
+\def \DEPARTEMENT {Department of Computer Science \& Engineering}
+\def \COURSENUM {CSL7090}
+\def \COURSENAME {Software \& Data Engineering (SDE)}
+\def \REPORTTITLE {Assignment 2}
+\def \STUDENTNAME {Aviral Tripathi}
+\def \STUDENTID {STUDNUM}
+\def \INSTRUCTOR {Dr. Sumit Kalra}
+
+%------------------------------------------------%
+
+\setlength{\parindent}{0em}
+\setlength{\parskip}{0em}
+
+\begin{document}
+
+\pagenumbering{Roman}
+
+\begin{titlepage}
+    \vfill
+    \begin{center}
+        \includesvg[width=1\textwidth]{\LOGOPATH} \\
+        \hfill \\
+        \Large{\DEPARTEMENT} \\
+        \Large{\COURSENUM\;-\;\COURSENAME} \\
+        \vfill
+        % {\fontfamily{ptm}\selectfont\textsc{\textbf{\LARGE{\REPORTTITLE}}}}
+
+        % \usepackage{graphicx}
+
+% ...
+
+        \resizebox{1\textwidth}{!}{%
+          {\fontfamily{ptm}\selectfont\textsc{{\small{\REPORTTITLE}}}}%
+        }
+    \end{center}
+    \vfill
+    \begin{flushleft}
+        \Large{\textbf{Prepared by:} \STUDENTNAME} \\
+        \Large{\textbf{Roll no:} m22ma012} \\
+        \Large{\textbf{Instructor:} \INSTRUCTOR}
+    \end{flushleft}
+    \vfill
+\end{titlepage}
+
+%--------------ABSTRACT ------------------------%
+{
+%\centering
+%\section*{Abstract}
+%You can check the \mintinline{text}{cites.bib} in order to add references (it would be automatically added to the report once you cite it\cite{rfc3447} with \mintinline{latex}{\cite{tag}}). For the figures I do not prefer static figures, I like to generate them with TikZ, but in case you've needed some static figures you can add them to the \mintinline{text}{assets} directory to keep your files organized.
+%\clearpage
+}
+
+%-----------------------------------------------%
+
+\tableofcontents
+\clearpage
+
+\setlength{\parskip}{\baselineskip}%
+
+\pagenumbering{arabic}
+
+%--------------INTRODUCTION ---------------------%
+
+\section{Task 1: Setting Up a Virtual Machine (VM) on GCP}
+
+\subsection{Create a GCP account if you don't have one.}
+I have created a GCP account and loaded my \$50 credit in it, and also created a new project by the name of 'Assignment2' under the institution iitj.ac.in, here's my GCP dashboard.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{a2_7.PNG}
+    \caption{My GCP Dashboard}
+    \label{fig:logo}
+\end{figure}
+
+
+\subsection{Set up a Virtual Machine instance using Google Compute Engine.}
+I have created a Virtual Machine (VM), by the name 'vm', and the following configuration details.
+
+\begin{itemize}[noitemsep]
+  \itemsep0.5em
+  \item Location: Default
+  \item Type: E2-micro (0.25-2 vCPU, 1 shared core): chosen to reduce cost
+  \item RAM: 1GB
+  \item Operating System: Ubuntu: chosen because of familiarity with CLI commands
+  \item Storage: 50GB
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{assets/a2_8.PNG}
+    \caption{Virtual Machine created (vm)}
+    \label{fig:logo}
+\end{figure}
+
+% \begin{figure}[H]
+%     \centering
+%     \includesvg[width=0.5\textwidth]{assets/birzeit-logo.svg}
+%     \caption{Birzeit Logo (SVG)}
+% \end{figure}
+
+\subsection{Access the VM using SSH from your local machine.}
+We can access the VM by using ssh (secure shell) command from out local machine, by using the external IP address of the VM, this external IP can be obtained from the GCP compute engine dashboard.
+
+% \begin{center} 
+%     % \begin{verbatim}
+%     ssh m22ma012@34.170.174.103 
+%     % \end{verbatim}
+% \end{center}
+
+\begin{listing}[H]
+\begin{minted}[frame=single,framesep=10pt,breaklines,breakanywhere]{shell}
+ssh m22ma012@34.170.174.103 
+\end{minted}
+\end{listing}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{assets/a2_9.PNG}
+    \caption{Accessing the Virtual Machine using SSH}
+    \label{fig:logo}
+\end{figure}
+
+
+\subsection{Install Nginx web server on the VM.}
+
+We can install Nginx on our VM by using the following commands:
+
+\begin{listing}[htbp]
+\begin{minted}[frame=single,framesep=10pt,breaklines,breakanywhere]{shell}
+sudo apt update
+sudo apt install nginx
+\end{minted}
+\end{listing}
+
+These commands will install Nginx, and we can now start Nginx and check the status using the commands:
+
+\begin{listing}[H]
+\begin{minted}[frame=single,framesep=10pt,breaklines,breakanywhere]{shell}
+sudo systemctl start nginx
+sudo systemctl status nginx
+\end{minted}
+\end{listing}
+
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{a2_10.PNG}
+    \caption{Nginx is Active and running on the VM.}
+    \label{fig:logo}
+\end{figure}
+
+\subsection{Display a custom webpage through the web server to demonstrate successful setup.}
+
+To display a custom webpage, I have modified the index.html file, which is the default file displayed, when we enter the external IP of VM in a browser, I have modified that file with a simple web page having "Assignment 2" as title and my name under it.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{Screenshot (6).png}
+    \caption{Custom webpage for my VM.}
+    \label{fig:logo}
+\end{figure}
+
+
+\clearpage
+
+\section{Task 2: Docker Containerization}
+
+\subsection{Installing docker on VM}
+
+For installing docker I used the snap package management system, I used the following commands for installing docker:
+\begin{listing}[htbp]
+\begin{minted}[frame=single,framesep=10pt,breaklines,breakanywhere]{shell}
+sudo apt update
+sudo snap install docker
+\end{minted}
+\end{listing}
+
+to verify, we can check the docker version
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{a2_11.PNG}
+    \caption{Docker installed successfully on VM.}
+    \label{fig:logo}
+\end{figure}
+
+to ensure smoother operations of next tasks, it is important ro run Docker without 'sudo', for that we can use these commands:
+
+\begin{listing}[htbp]
+\begin{minted}[frame=single,framesep=10pt,breaklines,breakanywhere]{shell}
+sudo groupadd docker
+sudo usermod -aG docker $USER
+newgrp docker
+\end{minted}
+\end{listing}
+
+Now we can use docker without 'sudo'.
+
+\subsection{Build a Docker image for a simple application}
+
+I have created a directory called "docker-app", and placed a python file app.py in it, this file has a simple print statement that prints "hello-docker"
+
+For creating an image of this app, i have made a file 'Dockerfile' (without extension) in the same directory (docker-app), this file has a blueprint about how to create a docker image.
+
+Run this command to build docker image of the directory 'docker-app' (as Dockerfile is in the same directory, we use a dot to get the adress of the file):
+\begin{listing}[H]
+\begin{minted}[frame=single,framesep=10pt,breaklines,breakanywhere]{shell}
+docker build -t docker-app .
+\end{minted}
+\end{listing}
+
+we can now finf all the created images in the 'docker images'
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{assets/a2_12.PNG}
+    \caption{Docker images.}
+    \label{fig:logo}
+\end{figure}
+
+\subsection{Push the Docker image to Google Artifact Registry.}
+
+to push the desired docker images in GCR (google container registory), we first need to perform google cloud authentication:
+
+\begin{listing}[htbp]
+\begin{minted}[frame=single,framesep=10pt,breaklines,breakanywhere]{shell}
+gcloud auth login
+gcloud auth configure-docker
+\end{minted}
+\end{listing}
+before pushing the image, we need to tag it, and the tagged image will be seen in the 'docker images'
+
+\begin{listing}[htbp]
+\begin{minted}[frame=single,framesep=10pt,breaklines,breakanywhere]{shell}
+docker tag docker-app:latest gcr.io/assignment2-400811/docker
+app:latest
+\end{minted}
+\end{listing}
+
+After authorizing we need to run this command to push the image in GCR, in a repository by the name of 'docker-app', within which we will pushing the image
+
+\begin{listing}[htbp]
+\begin{minted}[frame=single,framesep=10pt,breaklines,breakanywhere]{shell}
+docker push gcr.io/assignment2-400811/docker-app:latest
+\end{minted}
+\end{listing}
+
+\clearpage
+
+now we can find the image in the GCR:
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1\textwidth]{assets/Screenshot (7).png}
+    \caption{Docker Image pushed in GCR.}
+    \label{fig:logo}
+\end{figure}
+
+\subsection{Create a Docker Compose file that defines a multi-container application (e.g., web server with
+Nginx + backend application).
+}
+
+We can create a docker-compose file using 'touch' command:
+
+\begin{listing}[htbp]
+\begin{minted}[frame=single,framesep=10pt,breaklines,breakanywhere]{shell}
+touch docher-compose.yml
+\end{minted}
+\end{listing}
+
+the docker-compose.yml file has the following:
+
+\begin{listing}[htbp]
+\begin{minted}[frame=single,framesep=10pt,breaklines,breakanywhere]{shell}
+  GNU nano 4.8                                                docker-compose.yml                                                           
+version: '3'
+
+services:
+  web:
+    image: nginx:latest
+    ports:
+      - "8080:80"
+    networks:
+      - myapp-net
+
+  backend:
+    image: gcr.io/assignment2-400811/docker-app:latest
+    environment:
+      - DB_HOST=my-database
+    networks:
+      - myapp-net
+  my-database:
+    image: busybox:latest
+    networks:
+      - myapp-net
+
+networks:
+  myapp-net:
+
+\end{minted}
+\end{listing}
+
+services in this docker-compose file are:
+
+\begin{itemize}[noitemsep]
+  \item \textbf{web} is the first service. It uses the official Nginx Docker image (nginx:latest) as its base image. It also maps port 8080 on the host to port 80 in the container.
+  \item \textbf{backend} is the second service. It uses a custom Docker image (gcr.io/assignment2-400811/docker-app:latest). 
+  \item \textbf{my-database} is the third service. It uses the BusyBox Docker image (busybox:latest), this container is a \textit{simple placeholder and not actually be a functioning database container.}
+\end{itemize}
+
+\clearpage
+
+\subsection{Deploy the multi-container application on your VM (from Task 1) using Docker Compose.}
+
+first we need to install docker-compose
+
+\begin{listing}[htbp]
+\begin{minted}[frame=single,framesep=10pt,breaklines,breakanywhere]{shell}
+sudo apt install docker-compose
+\end{minted}
+\end{listing}
+
+Now we run the docker-compose.yml file (automatically detected by docker-compose), docker-compose will create containers for this multi-container app
+
+\begin{listing}[htbp]
+\begin{minted}[frame=single,framesep=10pt,breaklines,breakanywhere]{shell}
+docker-compose up -d
+\end{minted}
+\end{listing}
+(-d flag runs the containers in background)
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1\textwidth]{assets/a2_docker-compose-containers.PNG}
+    \caption{Containers of the multi-container app.}
+    \label{fig:logo}
+\end{figure}
+
+\subsection{ Adjust the Docker Compose configuration to scale the application horizontally.}
+
+% To scale the app horizontally we use the following command:
+
+% \begin{listing}[htbp]
+% \begin{minted}[frame=single,framesep=10pt,breaklines,breakanywhere]{shell}
+% docker-compose up -d --scale backend=3
+% \end{minted}
+% \end{listing}
+
+this command creates 3 replicas of 'backend' service, we can scale any service like this, by creating its replicas.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{assets/a2_scaling_the_app.PNG}
+    \caption{Scaling the 'backend' service of the multi-container app.}
+    \label{fig:logo}
+\end{figure}
+
+\clearpage
+
+\section{Task 3: Container Deployment on GCP}
+
+\subsection{Create a Google Kubernetes Engine (GKE) cluster}
+
+To create a cluster we use the following set of commands:
+
+\begin{listing}[htbp]
+\begin{minted}[frame=single,framesep=10pt,breaklines,breakanywhere]{shell}
+
+gcloud auth login
+gcloud config set project assignment2-400811
+gcloud container clusters create kubernetes-cluster --num-nodes=1 --zone=us-central1-a
+
+\end{minted}
+\end{listing}
+
+A cluster will be created in the Google Kubernetes Engine (GKE):
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{assets/Screenshot (8).png}
+    \caption{GKE cluster created.}
+    \label{fig:logo}
+\end{figure}
+
+
+\clearpage
+
+\subsection{ Deploy a sample application container into the GKE cluster.}
+
+First we need to install 'kubectl' to interact with the kubernetes cluster:
+
+\begin{listing}[htbp]
+\begin{minted}[frame=single,framesep=10pt,breaklines,breakanywhere]{shell}
+
+curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+chmod +x ./kubectl
+sudo mv ./kubectl /usr/local/bin/kubectl
+sudo apt-get install apt-transport-https ca-certificates gnupg
+echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main
+curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
+
+sudo apt-get install kubectl
+
+sudo apt-get install google-cloud-sdk-gke-gcloud-auth-plugin
+
+\end{minted}
+\end{listing}
+
+Then I created a deployment.yaml file, to deploy the app 
+
+\begin{listing}[H]
+\begin{minted}[frame=single,framesep=10pt,breaklines,breakanywhere]{shell}
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sample-app-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sample-app
+  template:
+    metadata:
+      labels:
+        app: sample-app
+    spec:
+      containers:
+      - name: sample-app
+        image: gcr.io/assignment2-400811/docker-app  
+        ports:
+        - containerPort: 80
+
+
+\end{minted}
+\end{listing}
+
+This app is using the same image as present in my GCR (docker-app image)
+
+to deploy this image run the command
+
+\begin{listing}[htbp]
+\begin{minted}[frame=single,framesep=10pt,breaklines,breakanywhere]{shell}
+
+kubectl apply -f deployment.yaml
+
+\end{minted}
+\end{listing}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{assets/a2_deployment_yaml.PNG}
+    \caption{running deployment.yaml to print "hello-docker"}
+    \label{fig:logo}
+\end{figure}
+
+\subsection{Ensure the application, including Nginx as a reverse proxy, is accessible over the internet.}
+
+create a file service.yaml, and run it to get the external IP of the cluster
+
+\begin{listing}[htbp]
+\begin{minted}[frame=single,framesep=10pt,breaklines,breakanywhere]{shell}
+
+  GNU nano 4.8                                                   service.yaml                                                              
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+spec:
+  selector:
+    app: sample-app
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+  type: LoadBalancer
+
+
+
+\end{minted}
+\end{listing}
+
+run this file using:
+
+\begin{listing}[H]
+\begin{minted}[frame=single,framesep=10pt,breaklines,breakanywhere]{shell}
+
+kubectl apply -f service.yaml
+kubectl get svc nginx-service
+
+\end{minted}
+\end{listing}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{assets/a2_service_yaml.PNG}
+    \caption{Obtaining the external IP of app, to access it over the internet"}
+    \label{fig:logo}
+\end{figure}
+
+\subsection{Scale the application by adjusting the number of replicas in the deployment.}
+
+to scale the app we need to change the number of replicas in the deployment.yaml file, suppose we change the number of replicas to 7:
+
+\begin{listing}[H]
+\begin{minted}[frame=single,framesep=10pt,breaklines,breakanywhere]{shell}
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sample-app-deployment
+spec:
+  replicas: 7 # changed to 7
+  selector:
+    matchLabels:
+      app: sample-app
+  template:
+    metadata:
+      labels:
+        app: sample-app
+    spec:
+      containers:
+      - name: sample-app
+        image: gcr.io/assignment2-400811/docker-app  
+        ports:
+        - containerPort: 80
+
+\end{minted}
+\end{listing}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{assets/a2_deployment_scale.PNG}
+    \caption{Scaling the app"}
+    \label{fig:logo}
+\end{figure}
+
+\subsection{Monitor the
+application's performance and resource utilization using GCP tools.}
+
+We can monitor the app's performance on GKE's Observability section:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{assets/Screenshot (9).png}
+    \caption{Monitoring the app's performance"}
+    \label{fig:logo}
+\end{figure}
+
+\rule{\linewidth}{1pt}
+
+
+\clearpage
+
+\section{References}
+
+
+
+\begin{enumerate}[label=\arabic*.,itemsep=0pt,parsep=0pt]
+
+      \item \url{https://pwittrock.github.io/docs/tasks/tools/install-kubectl/}
+      \item \url{https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-access-for-kubectl}
+      \item \url{https://cloud.google.com/sdk/?hl=en}
+      \item \url{https://www.educative.io/answers/how-to-install-google-cloud-cli-on-debian-ubuntu}
+      \item \url{https://stackoverflow.com/questions/42697026/install-google-cloud-components-error-from-gcloud-command}
+      \item \url{https://www.youtube.com/watch?v=PUH4Y5yuw0Y}
+      \item \url{https://www.youtube.com/results?search_query=install+kubectl+on+gcp}
+      \item \url{https://www.youtube.com/watch?v=OMquGlhrGgw}
+      \item \url{https://www.youtube.com/results?search_query=gke-gcloud-auth-plugin+}
+      \item \url{https://www.youtube.com/results?search_query=gke-gcloud-auth-plugin+kubectl}
+      \item \url{https://www.youtube.com/results?search_query=how+to+create+and+use+a+gke+cluster&sp=CAI%253D}
+      \item \url{https://www.youtube.com/watch?v=oZUSKoJ73NA}
+      \item \url{https://github.com/actions/runner-images/issues/6778}
+      \item \url{https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-access-for-kubectl}
+      \item \url{https://cloud.google.com/sdk/docs/components#external_package_managers}
+      \item \url{https://stackoverflow.com/questions/48038969/an-image-does-not-exist-locally-with-the-tag-while-pushing-image-to-local-regis}
+      \item \url{https://www.youtube.com/results?search_query=how+to+create+and+use+a+gke+cluster}
+      \item \url{https://www.youtube.com/watch?v=cQeCi2hT3is}
+      \item \url{https://cloud.google.com/blog/products/containers-kubernetes/kubectl-auth-changes-in-gke}
+      \item \url{https://stackoverflow.com/questions/40710526/error-message-service-cloudbuilt-googleapis-com-is-not-for-consumer-when-de}
+      \item \url{https://www.youtube.com/results?search_query=how+to+install+docker+on+gcp+vm}
+      \item \url{https://www.youtube.com/watch?v=FVnA1d_TGw0}
+      \item \url{https://download.docker.com/linux/debian/dists/bullseye/pool/stable/}
+      \item \url{https://forums.docker.com/t/installing-docker-on-buster-e-package-docker-ce-has-no-installation-candidate/108397/11}
+      \item \url{https://medium.com/@kyle.powers103/installing-docker-on-gcloud-vms-1479dd9dde30}
+      \item \url{https://www.youtube.com/watch?v=VNTG9IBnwAI&t=58s}
+      \item \url{https://www.youtube.com/watch?v=VNTG9IBnwAI&t=58s}
+      \item \url{https://download.docker.com/linux/debian/dists/bullseye/pool/stable/amd64/}
+
+\end{enumerate}
+
+
+\clearpage
+
+\listoffigures
+
+\clearpage
+
+
+\end{document}
