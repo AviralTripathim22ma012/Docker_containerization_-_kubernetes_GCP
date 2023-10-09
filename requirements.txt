@@ -1,0 +1,5 @@
+  GNU nano 4.8                                                 requirements.txt                                                            
+Flask==2.0.1
+
+
+

@@ -1,0 +1,24 @@
+  GNU nano 4.8                                                docker-compose.yml                                                           
+version: '3'
+
+services:
+  web:
+    image: nginx:latest
+    ports:
+      - "8080:80"
+    networks:
+      - myapp-net
+
+  backend:
+    image: gcr.io/assignment2-400811/docker-app:latest
+    environment:
+      - DB_HOST=my-database
+    networks:
+      - myapp-net
+  my-database:
+    image: busybox:latest
+    networks:
+      - myapp-net
+
+networks:
+  myapp-net:
